@@ -45,6 +45,15 @@ def print_cards(json_object, outputfile):
 					break
 		return member_string[:-1]
 
+	def print_types():
+		actions = []
+		for action in json_object['actions']:
+			if action['type'] in actions:
+				continue
+			else:
+				actions.append(action['type'])
+		print actions
+
 
 
 	cards = sorted(json_object['cards'], key=lambda k: k['idShort'])
@@ -53,13 +62,13 @@ def print_cards(json_object, outputfile):
 	else:
 		filename = 'output.csv'
 	with open(filename, 'wb') as csvfile:
-		writer = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+		writer = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
 		writer.writerow(['ID', 'Story', 'Description', 'Checklist', 'Labels', 'Due Date', 'Members'])
 		for card in cards:
 			writer.writerow([card['idShort'], card['name'],
 				card['desc'], checklist_data(card), labels(card), card['due'], members(card)]) 
 
-	
+		print_types()
 
 
 
