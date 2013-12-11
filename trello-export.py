@@ -54,6 +54,12 @@ def print_cards(json_object, outputfile):
 				actions.append(action['type'])
 		print actions
 
+	def safe_string(string):
+		if string != None:
+			return string.encode('ascii', 'ignore')
+		else:
+			return ''
+
 
 
 	cards = sorted(json_object['cards'], key=lambda k: k['idShort'])
@@ -65,8 +71,15 @@ def print_cards(json_object, outputfile):
 		writer = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
 		writer.writerow(['ID', 'Story', 'Description', 'Checklist', 'Labels', 'Due Date', 'Members'])
 		for card in cards:
-			writer.writerow([card['idShort'], card['name'],
-				card['desc'], checklist_data(card), labels(card), card['due'], members(card)]) 
+			writer.writerow([
+				card['idShort'], 
+				safe_string(card['name']),
+				safe_string(card['desc']), 
+				safe_string(checklist_data(card)), 
+				safe_string(labels(card)), 
+				safe_string(card['due']), 
+				safe_string(members(card))
+			]) 
 
 		print_types()
 
