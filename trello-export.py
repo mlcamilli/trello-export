@@ -31,6 +31,16 @@ def print_cards(json_object, outputfile):
 			string += item['name'] + '\n'
 		return string[:-1] 
 
+	def comments_data(card):
+		card_id = card['id']
+		comments = []
+		for action in json_object['actions']:
+			if ('card' in action['data'] and
+				action['data']['card']['id'] == card_id and 
+				action['type'] == 'commentCard'):
+				comments.append(action['data']['text'])
+		return '\n'.join(comments)
+
 	def labels(card):
 		label = ''
 		for lbl in card['labels']:
@@ -69,13 +79,14 @@ def print_cards(json_object, outputfile):
 		filename = 'output.csv'
 	with open(filename, 'wb') as csvfile:
 		writer = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-		writer.writerow(['ID', 'Story', 'Description', 'Checklist', 'Labels', 'Due Date', 'Members'])
+		writer.writerow(['ID', 'Story', 'Description', 'Checklist', 'Comments', 'Labels', 'Due Date', 'Members'])
 		for card in cards:
 			writer.writerow([
 				card['idShort'], 
 				safe_string(card['name']),
 				safe_string(card['desc']), 
-				safe_string(checklist_data(card)), 
+				safe_string(checklist_data(card)),
+				safe_string(comments_data(card)), 
 				safe_string(labels(card)), 
 				safe_string(card['due']), 
 				safe_string(members(card))
